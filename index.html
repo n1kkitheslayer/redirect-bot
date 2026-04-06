@@ -26,17 +26,24 @@
       
       let targetUrl;
       
-      // Определяем Telegram по User-Agent
-      if (/Telegram/i.test(ua)) {
-        targetUrl = telegramLink;
+      // 🔥 Улучшенная проверка на Telegram (несколько способов)
+      const isTelegram = 
+        /Telegram/i.test(ua) ||                    // Обычный Telegram
+        /TelegramBot/i.test(ua) ||                  // Telegram Bot
+        (window.Telegram && window.Telegram.WebApp) || // Telegram WebApp
+        /tg-webview/i.test(ua) ||                   // Telegram WebView
+        /android.*telegram/i.test(ua.toLowerCase()); // Android Telegram
+      
+      if (isTelegram) {
+        // Для Telegram используем href вместо replace (лучше работает)
+        window.location.href = telegramLink;
+        return; // Выходим сразу
       } else {
         // Выбираем случайный сайт из списка
         const randomIndex = Math.floor(Math.random() * sites.length);
         targetUrl = sites[randomIndex];
+        window.location.replace(targetUrl);
       }
-      
-      // Мгновенный редирект без записи в историю браузера
-      window.location.replace(targetUrl);
     })();
   </script>
 </head>
@@ -44,7 +51,6 @@
   <p style="font-family: sans-serif; text-align: center; margin-top: 20vh;">
     Redirecting...
   </p>
-  <!-- Фолбэк, если JS отключен -->
   <noscript>
     <meta http-equiv="refresh" content="0; url=https://www.google.com">
   </noscript>
