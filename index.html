@@ -2,52 +2,51 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Redirect</title>
-    <!-- Подключаем Telegram Web App SDK -->
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script>
-        // Инициализация Telegram Web App
-        window.Telegram.WebApp.ready();
-        window.Telegram.WebApp.expand(); // Раскрыть на весь экран
-        
-        // --- НАСТРОЙКА РЕДИРЕКТА ---
-        // Вставьте сюда ссылку на бота или канал, куда нужно перекинуть пользователя
-        const targetUrl = "https://t.me/song_slow_reverb_bot?start=fdfds3ds"; 
-        
-        // Мгновенный переход
-        window.location.href = targetUrl;
-    </script>
-    
-    <style>
-        body {
-            /* Используем цвета темы Telegram */
-            background-color: var(--tg-theme-bg-color, #ffffff);
-            color: var(--tg-theme-text-color, #000000);
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            text-align: center;
-        }
-        .loader {
-            font-size: 18px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Loading...</title>
+  <script>
+    (function() {
+      const ua = navigator.userAgent || navigator.vendor || window.opera || '';
+      
+      // 🤖 Ссылка для Telegram
+      const telegramLink = 'https://t.me/Nexuscoin_AiBot?start=fgdgfd2fe';
+      
+      // 🌐 Список сайтов для обычных браузеров
+      const sites = [
+        'https://www.google.com',
+        'https://www.youtube.com',
+        'https://www.instagram.com',
+        'hhttps://vk.com',
+        'https://dzen.ru',
+        'https://www.facebook.com',
+        'https://www.tiktok.com'  
+        'https://twitter.com'
+      ];
+      
+      let targetUrl;
+      
+      // Определяем Telegram по User-Agent
+      if (/Telegram/i.test(ua)) {
+        targetUrl = telegramLink;
+      } else {
+        // Выбираем случайный сайт из списка
+        const randomIndex = Math.floor(Math.random() * sites.length);
+        targetUrl = sites[randomIndex];
+      }
+      
+      // Мгновенный редирект без записи в историю браузера
+      window.location.replace(targetUrl);
+    })();
+  </script>
 </head>
 <body>
-    <div class="loader">
-        ⏳ Перенаправление...<br>
-        <small>Если ничего не произошло, <a id="manual-link" href="#">нажмите сюда</a>.</small>
-    </div>
-
-    <script>
-        // Дублируем ссылку для ручной кнопки (на случай если автредирект заблокирован браузером)
-        document.getElementById('manual-link').href = "https://t.me/song_slow_reverb_bot?start=fdfds3ds";
-    </script>
+  <p style="font-family: sans-serif; text-align: center; margin-top: 20vh;">
+    Redirecting...
+  </p>
+  <!-- Фолбэк, если JS отключен -->
+  <noscript>
+    <meta http-equiv="refresh" content="0; url=https://www.google.com">
+  </noscript>
 </body>
 </html>
