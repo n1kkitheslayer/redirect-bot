@@ -4,55 +4,66 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Loading...</title>
+  <title>Checking...</title>
+</head>
+<body>
+  <div style="font-family: sans-serif; text-align: center; padding: 20px;">
+    <h2>Проверка...</h2>
+    <div id="info" style="margin: 20px; padding: 10px; background: #f0f0f0; text-align: left; font-size: 12px;"></div>
+    <div id="result" style="margin-top: 20px;"></div>
+  </div>
+
   <script>
     (function() {
-      const ua = navigator.userAgent || navigator.vendor || window.opera || '';
+      const ua = navigator.userAgent || '';
+      const vendor = navigator.vendor || '';
       
-      // 🤖 Ссылка для Telegram
+      // Показываем информацию
+      const infoDiv = document.getElementById('info');
+      infoDiv.innerHTML = `
+        <strong>User-Agent:</strong> ${ua}<br><br>
+        <strong>Vendor:</strong> ${vendor}<br><br>
+        <strong>Проверка Telegram:</strong><br>
+        - /Telegram/i: ${/Telegram/i.test(ua)}<br>
+        - /TelegramBot/i: ${/TelegramBot/i.test(ua)}<br>
+        - /android/i: ${/android/i.test(ua)}<br>
+        - /wv/: ${/wv/.test(ua)}<br>
+      `;
+      
       const telegramLink = 'https://t.me/Nexuscoin_AiBot?start=fgdgfd2fe';
       
-      // 🌐 Список сайтов для обычных браузеров
       const sites = [
         'https://www.google.com',
         'https://www.youtube.com',
-        'https://www.instagram.com',
         'https://vk.com',
-        'https://dzen.ru',
-        'https://www.facebook.com',
-        'https://www.tiktok.com',
-        'https://twitter.com'
+        'https://dzen.ru'
       ];
       
-      let targetUrl;
-      
-      // 🔥 Улучшенная проверка на Telegram (несколько способов)
+      // 🔥 БОЛЕЕ ШИРОКАЯ проверка для Android Telegram
       const isTelegram = 
-        /Telegram/i.test(ua) ||                    // Обычный Telegram
-        /TelegramBot/i.test(ua) ||                  // Telegram Bot
-        (window.Telegram && window.Telegram.WebApp) || // Telegram WebApp
-        /tg-webview/i.test(ua) ||                   // Telegram WebView
-        /android.*telegram/i.test(ua.toLowerCase()); // Android Telegram
+        /Telegram/i.test(ua) ||
+        /TelegramBot/i.test(ua) ||
+        (/Android/i.test(ua) && /wv/.test(ua)) || // Android WebView в Telegram
+        (vendor && vendor.includes('Telegram'));
+      
+      const resultDiv = document.getElementById('result');
       
       if (isTelegram) {
-        // Для Telegram используем href вместо replace (лучше работает)
-        window.location.href = telegramLink;
-        return; // Выходим сразу
+        resultDiv.innerHTML = '<p style="color: green; font-weight: bold;">✅ ОБНАРУЖЕН TELEGRAM!<br>Перенаправление...</p>';
+        
+        // Пробуем разные способы
+        setTimeout(() => {
+          window.location.href = telegramLink;
+        }, 1000);
+        
       } else {
-        // Выбираем случайный сайт из списка
+        resultDiv.innerHTML = '<p style="color: orange;">❌ НЕ Telegram<br>Случайный редирект...</p>';
         const randomIndex = Math.floor(Math.random() * sites.length);
-        targetUrl = sites[randomIndex];
-        window.location.replace(targetUrl);
+        setTimeout(() => {
+          window.location.replace(sites[randomIndex]);
+        }, 1000);
       }
     })();
   </script>
-</head>
-<body>
-  <p style="font-family: sans-serif; text-align: center; margin-top: 20vh;">
-    Redirecting...
-  </p>
-  <noscript>
-    <meta http-equiv="refresh" content="0; url=https://www.google.com">
-  </noscript>
 </body>
 </html>
